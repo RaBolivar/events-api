@@ -16,5 +16,16 @@ namespace api.Mappers
         Date = eventItem.Date
       };
     }
+
+    public static Event ToEventFromCreateDto(this CreateEventRequestDto createUserRequest)
+    {
+      return new Event
+      {
+        Name = createUserRequest.Name,
+        Location = createUserRequest.Location,
+        Description = createUserRequest.Description,
+        Date = createUserRequest.Date
+      };
+    }
   }
 }
