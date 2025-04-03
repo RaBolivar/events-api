@@ -16,6 +16,7 @@ namespace api.Controllers
   public class EventController : ControllerBase
   {
     private readonly ApplicationDBContext _context;
+    private readonly string _imagePath = Path.Combine(Directory.GetCurrentDirectory(), "UploadedImages");
     public EventController(ApplicationDBContext context)
     {
       _context = context;
@@ -41,11 +42,27 @@ namespace api.Controllers
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateEventRequestDto eventDto)
+    public async Task<IActionResult> Create([FromForm] CreateEventRequestDto eventDto)
     {
+      if (eventDto.File == null || eventDto.File.Length == 0)
+        return BadRequest("No file uploaded.");
+
       var eventModel = eventDto.ToEventFromCreateDto();
       await _context.Events.AddAsync(eventModel);
       await _context.SaveChangesAsync();
+
+      var fileName = eventModel.Id.ToString() + Path.GetExtension(eventDto.File.FileName);
+      var filePath = Path.Combine(_imagePath, fileName);
+
+      using (var stream = new FileStream(filePath, FileMode.Create))
+      {
+        await eventDto.File.CopyToAsync(stream);
+      }
+
+      eventModel.Image = fileName;
+      _context.Events.Update(eventModel);
+      await _context.SaveChangesAsync();
+
       return CreatedAtAction(nameof(getById), new { id = eventModel.Id }, eventModel.ToDto());
     }
 
