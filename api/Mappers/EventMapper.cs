@@ -13,7 +13,8 @@ namespace api.Mappers
         Name = eventItem.Name,
         Location = eventItem.Location,
         Description = eventItem.Description,
-        Date = eventItem.Date
+        Date = eventItem.Date,
+        Image = eventItem.Image
       };
     }
 

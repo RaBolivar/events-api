@@ -7,5 +7,6 @@ namespace api.Dtos.Event
     public string Location { get; set; }
     public string Description { get; set; }
     public DateTime Date { get; set; }
+    public string Image { get; set; }
   }
 }
